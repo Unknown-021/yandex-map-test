@@ -22,7 +22,6 @@ export default {
   },
   watch: {
     address() {
-      console.log('123');
       this.show = true;
       setTimeout(() => (this.show = false), 1000);
     },
