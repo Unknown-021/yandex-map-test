@@ -1,19 +1,19 @@
 <template>
   <v-container id="map">
-    <area-selector />
-    <notification-card :address="address" />
+    <notification-card :clickAddress="clickAddress" />
     <yandex-map
       ref="mapRef"
       ymap-class="map-box"
-      :coords="moscowCoords"
-      :controls="controls"
+      :coords="mapOptions.moscowCoords"
+      :controls="mapOptions.controls"
       zoom="11"
-      :scroll-zoom="scrollZoom"
+      :scroll-zoom="mapOptions.scrollZoom"
       @map-was-initialized="onInitMap"
       @click="onClick"
     >
-      <ymap-marker :coords="clickCoords" marker-id="123" hind-container="hint" />
+      <ymap-marker :coords="clickCoords" marker-id="yMarker" hind-container="hint" />
     </yandex-map>
+    <area-selector />
   </v-container>
 </template>
 
@@ -21,6 +21,7 @@
 import { yandexMap, ymapMarker } from 'vue-yandex-maps';
 import AreaSelector from './area-selector.vue';
 import NotificationCard from './notification-card.vue';
+import { options } from '../store/constants/mapOptions';
 
 export default {
   name: 'Ymap',
@@ -32,21 +33,22 @@ export default {
   },
   data() {
     return {
-      moscowCoords: [55.754458, 37.62137],
-      clickCoords: [],
-      controls: ['fullscreenControl', 'searchControl', 'zoomControl'],
-      scrollZoom: false,
+      mapOptions: options,
       map: null,
       mkadPolygon: null,
       myRoute: null,
       straitRoute: null,
-      address: '',
+      clickCoords: [],
+      clickAddress: '',
     };
   },
   watch: {
     selectedArea() {
       this.map.geoObjects.remove(this.mkadPolygon);
       this.createArea(this.coords);
+    },
+    clickAddress() {
+      this.addClick();
     },
   },
   computed: {
@@ -70,9 +72,8 @@ export default {
         clickPoint.geometry.getCoordinates(),
       ).position;
 
-      this.getAddress();
+      this.getclickAddress();
       this.createRoute(closestPoint, clickPoint);
-      this.addClick();
     },
     createArea(coords) {
       this.mkadPolygon = new ymaps.Polygon([[...coords]], {
@@ -88,28 +89,15 @@ export default {
         .done(
           (route) => {
             if (this.myRoute) {
-              this.map.geoObjects.remove(this.myRoute);
-              this.map.geoObjects.remove(this.straitRoute);
+              this.map.geoObjects.remove(this.myRoute).remove(this.straitRoute);
             }
             route.options.set('mapStateAutoApply', false);
             this.myRoute = route;
-            this.straitRoute = new ymaps.Polyline(
-              [
-                this.mkadPolygon.geometry.getClosest(clickPoint.geometry.getCoordinates()).position,
-                clickPoint.geometry.getCoordinates(),
-              ],
-              {
-                hintContent: 'Ломаная',
-              },
-              {
-                draggable: true,
-                strokeColor: '#000000',
-                strokeWidth: 2,
-                strokeStyle: '0.5 3',
-              },
-            );
-            this.map.geoObjects.add(this.myRoute);
-            this.map.geoObjects.add(this.straitRoute);
+            this.straitRoute = new ymaps.Polyline([
+              this.mkadPolygon.geometry.getClosest(clickPoint.geometry.getCoordinates()).position,
+              clickPoint.geometry.getCoordinates(),
+            ]);
+            this.map.geoObjects.add(this.myRoute).add(this.straitRoute);
           },
           (err) => {
             throw err;
@@ -117,15 +105,18 @@ export default {
           this,
         );
     },
-    getAddress() {
-      const getaddressByCoordinates = ymaps.geocode([this.clickCoords[0], this.clickCoords[1]]);
-      getaddressByCoordinates.then((res) => {
-        this.address = res.geoObjects.get(0).properties.get('text');
+    getclickAddress() {
+      const getclickAddressByCoordinates = ymaps.geocode([
+        this.clickCoords[0],
+        this.clickCoords[1],
+      ]);
+      getclickAddressByCoordinates.then((res) => {
+        this.clickAddress = res.geoObjects.get(0).properties.get('text');
       });
     },
     addClick() {
-      if (this.address) {
-        this.$store.commit('addClick', this.address);
+      if (this.clickAddress) {
+        this.$store.commit('addClick', this.clickAddress);
       }
     },
   },

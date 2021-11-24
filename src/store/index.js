@@ -1,19 +1,19 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { mkadCoords, closestPodmoskovie } from './coords/constants';
+import { mkadCoords, podmoskovieCoords } from './constants/coordinates';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
     mkadCoords,
-    closestPodmoskovie,
+    podmoskovieCoords,
     selectedArea: 'mkadCoords',
     clicks: [],
   },
   getters: {
     mkadCoords: (state) => state.mkadCoords,
-    closestPodmoskovie: (state) => state.closestPodmoskovie,
+    podmoskovieCoords: (state) => state.podmoskovieCoords,
     selectedArea: (state) => state.selectedArea,
   },
   mutations: {

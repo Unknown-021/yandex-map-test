@@ -25,7 +25,7 @@ export const mkadCoords = [
   [55.709574, 37.388874],
 ];
 
-export const closestPodmoskovie = [
+export const podmoskovieCoords = [
   [55.333024, 37.712367],
   [55.351808, 37.915614],
   [55.345548, 38.077663],

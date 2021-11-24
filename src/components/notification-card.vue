@@ -1,7 +1,7 @@
 <template>
   <transition name="slide-fade">
     <v-card v-if="show" class="notification-card" elevation="2" outlined shaped tile>
-      <span>{{ address }}</span>
+      <span>{{ clickAddress }}</span>
     </v-card>
   </transition>
 </template>
@@ -10,7 +10,7 @@
 export default {
   name: 'notification-card',
   props: {
-    address: {
+    clickAddress: {
       type: String,
       required: true,
     },
@@ -21,7 +21,7 @@ export default {
     };
   },
   watch: {
-    address() {
+    clickAddress() {
       this.show = true;
       setTimeout(() => (this.show = false), 1000);
     },

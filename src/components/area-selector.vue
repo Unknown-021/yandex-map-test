@@ -21,7 +21,7 @@ export default {
         },
         {
           text: 'Подмосковье',
-          value: 'closestPodmoskovie',
+          value: 'podmoskovieCoords',
         },
       ],
     };
@@ -36,10 +36,10 @@ export default {
 
 <style>
 .area-select {
-  position: absolute;
+  position: absolute !important;
   z-index: 999999;
-  top: 30px;
-  right: 160px;
-  width: 320px;
+  top: 43px;
+  width: 314px;
+  margin-left: 10px !important;
 }
 </style>
